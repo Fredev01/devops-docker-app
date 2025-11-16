@@ -1,0 +1,44 @@
+# Node modules instalados localmente (se instalarán dentro del contenedor)
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+
+# Archivos de entorno
+.env
+.env.*  
+!.env.example
+
+# Logs
+*.log
+logs/
+debug.log
+
+# Tests
+coverage/
+*.test.js
+*.spec.js
+
+# Configuración del sistema y editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Git
+.git
+.gitignore
+
+# Builds o artefactos generados
+dist/
+build/
+public/
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Otras carpetas o archivos temporales
+tmp/
+temp/
