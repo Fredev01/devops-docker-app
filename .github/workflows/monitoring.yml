@@ -1,0 +1,43 @@
+name: Monitoreo de Aplicación
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar salud del servicio
+        run: |
+          curl -f https://aqua-minds.org/health || (echo "::error::El endpoint /health falló" && exit 1)
+
+      - name: Consultar métricas Prometheus
+        run: |
+          curl -f https://aqua-minds.org/metrics > metrics.txt || echo "::warning::No se pudo acceder a /metrics"
+          cat metrics.txt
+
+      - name: Analizar métricas
+        run: |
+          if grep -qi "error" metrics.txt; then
+            echo "::warning::Se detectaron posibles errores en las métricas"
+          fi
+
+      - name: Obtener logs
+        run: |
+          curl -f https://aqua-minds.org/logs/latest > logs.json || echo "::warning::No se pudieron obtener logs"
+          cat logs.json
+
+      - name: Analizar logs
+        run: |
+          if grep -q "ERROR" logs.json; then
+            echo "::error::Se detectaron errores críticos en los logs"
+          fi
+
+      - name: Verificar trazas
+        run: |
+          curl -f https://otel-collector.aqua-minds.org/v1/traces || echo "::warning::No se encontraron trazas recientes"
+
+      - name: Finalizar monitoreo
+        run: echo "Proceso de monitoreo finalizado correctamente."
